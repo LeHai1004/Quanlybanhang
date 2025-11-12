@@ -8,13 +8,13 @@ package quanlybanhang;
  *
  * @author HOANG HAI
  */
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+// Đã xóa: import java.util.stream.Collectors;
 
 public class QuanLySanPhamImpl implements IQuanLySanPham {
 
-    // Aggregation (Kết tập ⚪️)
     private List<SanPham> danhSachSP;
 
     public QuanLySanPhamImpl() {
@@ -39,17 +39,45 @@ public class QuanLySanPhamImpl implements IQuanLySanPham {
 
     @Override
     public void xoa(String maSP) {
-        boolean removed = danhSachSP.removeIf(sp -> sp.getMaSP().equals(maSP));
-        if (removed) {
+        // Dùng vòng lặp for-each kết hợp với biến tạm để xóa
+        // (Vì không dùng được Stream, cũng không nên xóa khi đang lặp)
+        SanPham spCanXoa = null;
+        for (SanPham sp : danhSachSP) {
+            if (sp.getMaSP().equals(maSP)) {
+                spCanXoa = sp;
+                break; // Tìm thấy thì dừng
+            }
+        }
+        
+        if (spCanXoa != null) {
+            danhSachSP.remove(spCanXoa);
             System.out.println("Đã xóa SP có mã: " + maSP);
         }
     }
 
+    // --- HÀM timKiemTheoTen ĐÃ ĐƯỢC VIẾT LẠI ---
     @Override
     public List<SanPham> timKiemTheoTen(String ten) {
-        return danhSachSP.stream()
-                .filter(sp -> sp.getTenSP().toLowerCase().contains(ten.toLowerCase()))
-                .collect(Collectors.toList());
+        // 1. Tạo một danh sách rỗng để chứa kết quả
+        List<SanPham> ketQuaTimKiem = new ArrayList<>();
+        
+        // 2. Chuyển từ khóa tìm kiếm về chữ thường
+        String tenTimKiemLower = ten.toLowerCase();
+
+        // 3. Dùng vòng lặp for-each cơ bản
+        for (SanPham sp : danhSachSP) {
+            // 4. Lấy tên sản phẩm và chuyển về chữ thường
+            String tenSanPhamLower = sp.getTenSP().toLowerCase();
+            
+            // 5. Kiểm tra xem tên SP có chứa từ khóa tìm kiếm không
+            if (tenSanPhamLower.contains(tenTimKiemLower)) {
+                // 6. Nếu có, thêm vào danh sách kết quả
+                ketQuaTimKiem.add(sp);
+            }
+        }
+
+        // 7. Trả về danh sách kết quả
+        return ketQuaTimKiem;
     }
 
     @Override
@@ -57,15 +85,23 @@ public class QuanLySanPhamImpl implements IQuanLySanPham {
         return this.danhSachSP;
     }
 
+    // --- HÀM timKiemTheoMa ĐÃ ĐƯỢC VIẾT LẠI ---
     @Override
     public SanPham timKiemTheoMa(String maSP) {
-        return danhSachSP.stream()
-                .filter(sp -> sp.getMaSP().equals(maSP))
-                .findFirst()
-                .orElse(null);
+        // Dùng vòng lặp for-each cơ bản
+        for (SanPham sp : danhSachSP) {
+            // Kiểm tra xem mã SP có khớp không
+            if (sp.getMaSP().equals(maSP)) {
+                // Nếu tìm thấy, trả về ngay lập tức
+                return sp;
+            }
+        }
+        
+        // Nếu lặp hết mà không tìm thấy, trả về null
+        return null;
     }
 
-    // Triển khai nghiệp vụ
+    // --- Các hàm nghiệp vụ (không đổi) ---
     @Override
     public boolean kiemTraTonKho(String maSP, int soLuongMua) {
         SanPham sp = timKiemTheoMa(maSP);

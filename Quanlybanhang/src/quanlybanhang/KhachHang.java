@@ -4,7 +4,7 @@
  */
 package quanlybanhang;
 
-import java.util.Objects;
+
 
 /**
  *
@@ -66,17 +66,6 @@ public class KhachHang {
         return tenKH;
     }
 
-    // Override equals/hashCode để Set có thể lọc trùng lặp
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        KhachHang khachHang = (KhachHang) o;
-        return maKH.equals(khachHang.maKH);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(maKH);
-    }
+    
+    
 }
