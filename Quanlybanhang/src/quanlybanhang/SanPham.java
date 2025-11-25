@@ -1,18 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package quanlybanhang;
 
-/**
- *
- * @author HOANG HAI
- */
+import java.util.Scanner;
+
 public abstract class SanPham {
-    private String maSP;
-    private String tenSP;
-    private double giaGoc;
-    private int soLuongTon; // Quản lý tồn kho
+    // --- THAY DOI: private -> protected ---
+    protected String maSP;
+    protected String tenSP;
+    protected double giaGoc;
+    protected int soLuongTon;
+
+    public SanPham() {}
 
     public SanPham(String maSP, String tenSP, double giaGoc, int soLuongTon) {
         this.maSP = maSP;
@@ -21,43 +18,38 @@ public abstract class SanPham {
         this.soLuongTon = soLuongTon;
     }
 
-    // Phương thức trừu tượng
-    public abstract double tinhThue();
-
-    public double getGiaBan() {
-        return this.giaGoc + tinhThue();
+    public void nhap(Scanner scanner) {
+        // MaSP nhap o Main
+        System.out.print("Nhap ten SP: ");
+        setTenSP(scanner.nextLine());
+        System.out.print("Nhap gia goc: ");
+        setGiaGoc(scanner.nextDouble());
+        System.out.print("Nhap so luong ton kho: ");
+        setSoLuongTon(scanner.nextInt());
+        scanner.nextLine(); 
     }
 
-    // Getters/Setters
-    public int getSoLuongTon() {
-        return soLuongTon;
-    }
-
-    public void setSoLuongTon(int soLuongTon) {
-        this.soLuongTon = soLuongTon;
+    public void xuat() {
+        // Bay gio lop con co the goi truc tiep bien maSP thay vi getMaSP()
+        // nhung de giu code chay on dinh, ta cu dung get nhu cu cung duoc
+        System.out.println("-------------------------");
+        System.out.println("Ma SP: " + this.maSP); // Dung truc tiep this.maSP
+        System.out.println("Ten: " + this.tenSP);
+        System.out.printf("Gia ban: %,.0f VND\n", getGiaBan());
+        System.out.println("Ton kho: " + this.soLuongTon);
     }
     
-    public String getMaSP() {
-        return maSP;
-    }
-
-    public void setMaSP(String maSP) {
-        this.maSP = maSP;
-    }
-
-    public String getTenSP() {
-        return tenSP;
-    }
-
-    public void setTenSP(String tenSP) {
-        this.tenSP = tenSP;
-    }
-
-    public double getGiaGoc() {
-        return giaGoc;
-    }
-
-    public void setGiaGoc(double giaGoc) {
-        this.giaGoc = giaGoc;
-    }
+    public abstract double tinhThue();
+    public double getGiaBan() { return this.giaGoc + tinhThue(); }
+    
+    // Getters/Setters (Van giu lai vi Main van can dung chung)
+    public int getSoLuongTon() { return soLuongTon; }
+    public void setSoLuongTon(int soLuongTon) { this.soLuongTon = soLuongTon; }
+    public String getMaSP() { return maSP; }
+    public String getTenSP() { return tenSP; }
+    public double getGiaGoc() { return giaGoc; }
+    
+    public void setMaSP(String maSP) { this.maSP = maSP; }
+    public void setTenSP(String tenSP) { this.tenSP = tenSP; }
+    public void setGiaGoc(double giaGoc) { this.giaGoc = giaGoc; }
 }

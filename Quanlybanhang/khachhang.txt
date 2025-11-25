@@ -1,0 +1,2 @@
+KH001|Nguyen Van A|Ha Noi
+KH002|Tran Thi B|Da Nang

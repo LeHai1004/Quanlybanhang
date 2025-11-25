@@ -1,26 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package quanlybanhang;
 
 import java.util.List;
 
-/**
- *
- * @author HOANG HAI
- */
 public class DonHang {
     private String maDonHang;
-    
-    // Association (Liên kết)
     private KhachHang khachHang;
-    
-    // Composition (Thành phần ⚫️)
     private List<ChiTietDonHang> danhSachChiTiet;
-    
-    // Association (Liên kết)
-    private IKhuyenMai khuyenMai;
+    private GiamGiaPhanTram khuyenMai; // Noi thang
 
     public DonHang(String maDonHang, KhachHang khachHang, List<ChiTietDonHang> chiTiet) {
         this.maDonHang = maDonHang;
@@ -28,8 +14,13 @@ public class DonHang {
         this.danhSachChiTiet = chiTiet;
         this.khuyenMai = null;
     }
+    
+    // Ham ho tro de DocGhiFileImpl su dung
+    public void themChiTiet(ChiTietDonHang ct) {
+        this.danhSachChiTiet.add(ct);
+    }
 
-    public void apDungKhuyenMai(IKhuyenMai khuyenMai) {
+    public void apDungKhuyenMai(GiamGiaPhanTram khuyenMai) {
         this.khuyenMai = khuyenMai;
     }
 
@@ -38,23 +29,13 @@ public class DonHang {
         for (ChiTietDonHang ct : danhSachChiTiet) {
             tong += ct.tinhTongPhan();
         }
-
-        // Đa hình
         if (khuyenMai != null) {
             tong = khuyenMai.apDung(tong);
         }
         return tong;
     }
     
-    public String getMaDonHang() {
-        return maDonHang;
-    }
-    
-    public KhachHang getKhachHang() {
-        return khachHang;
-    }
-    
-    public List<ChiTietDonHang> getDanhSachChiTiet() {
-        return danhSachChiTiet;
-    }
+    public String getMaDonHang() { return maDonHang; }
+    public KhachHang getKhachHang() { return khachHang; }
+    public List<ChiTietDonHang> getDanhSachChiTiet() { return danhSachChiTiet; }
 }
