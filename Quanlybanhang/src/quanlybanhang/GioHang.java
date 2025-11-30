@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GioHang {
-    
     private List<ChiTietDonHang> danhSachChiTiet;
 
     public GioHang() {
@@ -16,14 +15,13 @@ public class GioHang {
         this.danhSachChiTiet.add(chiTietMoi);
         System.out.println("Da them " + soLuong + " " + sp.getTenSP() + " vao gio.");
     }
-    
+
     public List<ChiTietDonHang> getDanhSachChiTiet() {
-        return new ArrayList<>(this.danhSachChiTiet); 
+        return new ArrayList<>(this.danhSachChiTiet);
     }
-    
+
     public void lamTrongGio() {
         this.danhSachChiTiet.clear();
-        System.out.println("Gio hang da duoc lam rong.");
     }
 
     public boolean isEmpty() {

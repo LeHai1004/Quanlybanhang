@@ -11,7 +11,7 @@ public class KhachHang {
     public KhachHang() {
         this.gioHang = new GioHang();
     }
-    
+
     public KhachHang(String maKH, String tenKH, String diaChi) {
         this.maKH = maKH;
         this.tenKH = tenKH;
@@ -20,28 +20,28 @@ public class KhachHang {
     }
 
     public void nhap(Scanner scanner) {
-        // MaKH se duoc nhap o Main de kiem tra tinh duy nhat
         System.out.print("Nhap ten Khach hang: ");
-        setTenKH(scanner.nextLine());
+        this.tenKH = scanner.nextLine();
+        
         System.out.print("Nhap dia chi: ");
-        setDiaChi(scanner.nextLine());
+        this.diaChi = scanner.nextLine();
     }
-    
+
     public void xuat() {
         System.out.println("-------------------------");
-        System.out.println("Ma KH: " + getMaKH());
-        System.out.println("Ten: " + getTenKH());
-        System.out.println("Dia chi: " + getDiaChi());
+        System.out.println("Ma KH: " + maKH);
+        System.out.println("Ten: " + tenKH);
+        System.out.println("Dia chi: " + diaChi);
     }
 
-    public GioHang getGioHang() { return this.gioHang; }
+    public GioHang getGioHang() { return gioHang; }
+    
     public String getTenKH() { return tenKH; }
+    public void setTenKH(String tenKH) { this.tenKH = tenKH; }
+
     public String getMaKH() { return maKH; }
     public void setMaKH(String maKH) { this.maKH = maKH; }
-    public void setTenKH(String tenKH) { this.tenKH = tenKH; }
-    public void setDiaChi(String diaChi) { this.diaChi = diaChi; }
 
-    public String getDiaChi() {
-        return diaChi;
-    }
+    public String getDiaChi() { return diaChi; }
+    public void setDiaChi(String diaChi) { this.diaChi = diaChi; }
 }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HeThongBanHang {
-    private IQuanLySanPham qlSanPham;
-    private IQuanLyDonHang qlDonHang;
+    private QuanLySanPhamImpl qlSanPham;
+    private QuanLyDonHangImpl qlDonHang;
+    private DocGhiFileImpl docGhi;
     private List<KhachHang> danhSachKhachHang;
-    private IDocGhiFile docGhi;
 
     public HeThongBanHang() {
         this.docGhi = new DocGhiFileImpl();
@@ -17,41 +17,44 @@ public class HeThongBanHang {
         taiDuLieuTuFile();
     }
     
-    // ... (GIU NGUYEN CAC HAM: taiDuLieu, luuDuLieu, themKhachHang, timKhachHang) ...
     public void taiDuLieuTuFile() {
         System.out.println("Dang tai du lieu tu file...");
         List<SanPham> dsSP = docGhi.docSanPham();
         List<KhachHang> dsKH = docGhi.docKhachHang();
         List<DonHang> dsDH = docGhi.docDonHang(dsSP, dsKH);
-        
-        this.qlSanPham.setData(dsSP);
-        this.qlDonHang.setData(dsDH);
-        this.danhSachKhachHang = dsKH;
-        
-        System.out.println("Tai xong! " + dsSP.size() + " SP, " + dsDH.size() + " DH, " + dsKH.size() + " KH.");
+        qlSanPham.setData(dsSP);
+        qlDonHang.setData(dsDH);
+        danhSachKhachHang = dsKH;
+        System.out.println("Tai xong: " + dsSP.size() + " SP, " + dsDH.size() + " DH, " + dsKH.size() + " KH.");
     }
-    
     public void luuDuLieuVaoFile() {
-        System.out.println("Dang luu du lieu ra file...");
+        System.out.println("Dang luu du lieu...");
         docGhi.luuSanPham(qlSanPham.layTatCa());
         docGhi.luuKhachHang(danhSachKhachHang);
         docGhi.luuDonHang(qlDonHang.layTatCaDonHang());
     }
 
-    public void themKhachHang(KhachHang kh) {
-        this.danhSachKhachHang.add(kh);
+    public void themKhachHang(KhachHang kh) { danhSachKhachHang.add(kh); }
+    public KhachHang timKhachHang(String ma) { 
+        for(KhachHang k : danhSachKhachHang) {
+            if(k.getMaKH().equals(ma)) return k; 
+        }
+        return null; 
     }
     
-    public KhachHang timKhachHang(String maKH) {
-        for (KhachHang kh : danhSachKhachHang) {
-            if (kh.getMaKH().equals(maKH)) {
-                return kh;
-            }
+    public List<SanPham> xemKhoHang() { return qlSanPham.layTatCa(); }
+    public SanPham timSanPham(String ma) { return qlSanPham.timKiemTheoMa(ma); }
+    public List<SanPham> timSanPhamTheoTen(String ten) { return qlSanPham.timKiemTheoTen(ten); }
+    public List<DonHang> xemLichSuMuaHang() { return qlDonHang.layTatCaDonHang(); }
+    public List<KhachHang> xemDanhSachKhachHang() { return danhSachKhachHang; }
+    
+    public DonHang timDonHang(String ma) {
+        for(DonHang dh : qlDonHang.layTatCaDonHang()) {
+            if(dh.getMaDonHang().equals(ma)) return dh;
         }
         return null;
     }
 
-    // ... (GIU NGUYEN HAM datHang) ...
     public void datHang(KhachHang khachHang) {
         GioHang gio = khachHang.getGioHang();
         if (gio.isEmpty()) {
@@ -64,51 +67,38 @@ public class HeThongBanHang {
                 return;
             }
         }
-
-        // Tu dong tao ma don hang (Logic +1)
-        int soLuongHienTai = qlDonHang.layTatCaDonHang().size();
-        String maDonHangMoi = "DH" + String.format("%03d", soLuongHienTai + 1);
-
-        DonHang donHangMoi = new DonHang(maDonHangMoi, khachHang, gio.getDanhSachChiTiet());
+        
+        String maMoi = "DH" + String.format("%03d", qlDonHang.layTatCaDonHang().size() + 1);
+        DonHang donHangMoi = new DonHang(maMoi, khachHang, gio.getDanhSachChiTiet());
         
         for (ChiTietDonHang ct : donHangMoi.getDanhSachChiTiet()) {
             qlSanPham.capNhatTonKho(ct.getSanPham().getMaSP(), ct.getSoLuong());
         }
         qlDonHang.themDonHang(donHangMoi);
         gio.lamTrongGio();
-        System.out.println(khachHang.getTenKH() + " da dat hang thanh cong! Ma don hang: " + maDonHangMoi);
-    }
-    
-    // --- THEM MOI: LOGIC HUY DON HANG ---
-    public void khachHangHuyDonHang(String maDonHang) {
-        DonHang donHangBiHuy = qlDonHang.huyDonHang(maDonHang);
-        if (donHangBiHuy == null) {
-            System.out.println("Loi: Khong tim thay don hang " + maDonHang + " de huy.");
-            return;
-        }
-        System.out.println("Dang hoan kho cho don hang da huy...");
-        for (ChiTietDonHang ct : donHangBiHuy.getDanhSachChiTiet()) {
-            String maSP = ct.getSanPham().getMaSP();
-            int soLuongHoanTra = ct.getSoLuong();
-            qlSanPham.capNhatTonKho(maSP, -soLuongHoanTra); 
-        }
-        System.out.println("Da huy don hang " + maDonHang + " va hoan tra san pham ve kho.");
+        System.out.println(khachHang.getTenKH() + " da dat hang thanh cong! Ma: " + maMoi);
     }
 
-    // ... (GIU NGUYEN CAC HAM BAO CAO) ...
-    public List<SanPham> xemKhoHang() { return this.qlSanPham.layTatCa(); }
-    public SanPham timSanPham(String maSP) { return this.qlSanPham.timKiemTheoMa(maSP); }
-    public List<DonHang> xemLichSuMuaHang() { return this.qlDonHang.layTatCaDonHang(); }
-    public DonHang timDonHang(String maDonHang) {
-        for (DonHang dh : qlDonHang.layTatCaDonHang()) {
-            if (dh.getMaDonHang().equals(maDonHang)) {
-                return dh;
-            }
+    public void khachHangHuyDonHang(String maDonHang) {
+        DonHang dh = qlDonHang.huyDonHang(maDonHang); 
+        if (dh == null) {
+            System.out.println("Loi: Don hang khong tim thay hoac da huy.");
+            return;
         }
-        return null;
+        System.out.println("Dang hoan kho...");
+        for (ChiTietDonHang ct : dh.getDanhSachChiTiet()) {
+            qlSanPham.capNhatTonKho(ct.getSanPham().getMaSP(), -ct.getSoLuong());
+        }
+        System.out.println("Da huy don " + maDonHang + " va hoan kho.");
     }
-    public List<KhachHang> xemDanhSachKhachHang() { return this.danhSachKhachHang; }
-    public List<SanPham> timSanPhamTheoTen(String ten) { return this.qlSanPham.timKiemTheoTen(ten); }
+
+    public List<DonHang> layDonHangCuaKhach(String maKH) {
+        List<DonHang> kq = new ArrayList<>();
+        for (DonHang dh : qlDonHang.layTatCaDonHang()) {
+            if (dh.getKhachHang().getMaKH().equals(maKH)) kq.add(dh);
+        }
+        return kq;
+    }
     
     public void inLichSuMuaHangCuaKhach(String maKH) {
         KhachHang kh = timKhachHang(maKH);
@@ -117,18 +107,18 @@ public class HeThongBanHang {
             return;
         }
         System.out.println("--- LICH SU MUA HANG CUA: " + kh.getTenKH() + " ---");
-        List<DonHang> tatCaDonHang = this.qlDonHang.layTatCaDonHang();
-        boolean daMuaGiChua = false;
-        for (DonHang dh : tatCaDonHang) {
-            if (dh.getKhachHang().getMaKH().equals(maKH)) {
-                daMuaGiChua = true;
-                System.out.println("  + Ma DH: " + dh.getMaDonHang());
+        List<DonHang> donCuaKhach = layDonHangCuaKhach(maKH);
+        if(donCuaKhach.isEmpty()) {
+             System.out.println("Khach hang nay chua mua don nao.");
+        } else {
+            for (DonHang dh : donCuaKhach) {
+                System.out.println("  + Ma DH: " + dh.getMaDonHang() + " | Trang thai: " + dh.getTrangThai());
                 for (ChiTietDonHang ct : dh.getDanhSachChiTiet()) {
-                    System.out.println("    - Mon: " + ct.getSanPham().getTenSP() + " | SL: " + ct.getSoLuong());
+                    System.out.println("    - Mon: " + ct.getSanPham().getTenSP() + 
+                                       " | SL: " + ct.getSoLuong());
                 }
             }
         }
-        if (!daMuaGiChua) { System.out.println("Khach hang nay chua mua don nao."); }
     }
     
     public void inChiTietDonHang(String maDonHang) {
@@ -139,7 +129,7 @@ public class HeThongBanHang {
         }
         KhachHang kh = dh.getKhachHang();
         List<ChiTietDonHang> danhSachChiTiet = dh.getDanhSachChiTiet();
-        System.out.println("\n--- CHI TIET DON HANG: " + dh.getMaDonHang() + " ---");
+        System.out.println("\n--- CHI TIET DON HANG: " + dh.getMaDonHang() + " | " + dh.getTrangThai() + " ---");
         System.out.println("Nguoi mua: " + kh.getTenKH() + " (Ma KH: " + kh.getMaKH() + ")");
         System.out.println("--- DANH SACH SAN PHAM ---");
         if (danhSachChiTiet.isEmpty()) {
@@ -153,60 +143,38 @@ public class HeThongBanHang {
         }
     }
 
-    // ... (GIU NGUYEN CAC HAM ADMIN CU) ...
-    public void adminThemSanPham(QuanTriVien admin, SanPham sp) {
-        if (admin == null) return;
-        System.out.println("Admin '" + admin.getTenAdmin() + "' dang them san pham: " + sp.getMaSP());
-        this.qlSanPham.them(sp);
-    }
-    
-    public void adminSuaSanPham(QuanTriVien admin, String maSP, SanPham spMoi) {
-        if (admin == null) return;
-        spMoi.setMaSP(maSP); 
-        this.qlSanPham.sua(maSP, spMoi);
+    public void adminXemDonHangDaHuy() {
+        System.out.println("--- DON HANG DA HUY ---");
+        boolean co = false;
+        for(DonHang dh : qlDonHang.layTatCaDonHang()) {
+            if ("Da Huy".equals(dh.getTrangThai())) {
+                System.out.println("- " + dh.getMaDonHang() + " | Khach: " + dh.getKhachHang().getTenKH());
+                co = true;
+            }
+        }
+        if(!co) System.out.println("Khong co don nao.");
     }
 
-    public void adminXoaSanPham(QuanTriVien admin, String maSP) {
-        if (admin == null) return;
-        this.qlSanPham.xoa(maSP);
-    }
-
-    public void adminXoaDonHang(QuanTriVien admin, String maDonHang) {
-        if (admin == null) return;
-        this.qlDonHang.xoaDonHang(maDonHang, admin);
-    }
+    // Admin methods
+    public void adminThemSanPham(QuanTriVien ad, SanPham sp) { if(ad!=null) qlSanPham.them(sp); }
+    public void adminSuaSanPham(QuanTriVien ad, String ma, SanPham sp) { if(ad!=null) { sp.setMaSP(ma); qlSanPham.sua(ma, sp); } }
+    public void adminXoaSanPham(QuanTriVien ad, String ma) { if(ad!=null) qlSanPham.xoa(ma); }
+    public void adminXoaDonHang(QuanTriVien ad, String ma) { if(ad!=null) qlDonHang.xoaDonHang(ma, ad); }
     
-    // --- THEM MOI: HAM TU DONG TAO MA (AUTO-INCREMENT) ---
-    
-    public String taoMaSanPhamMoi() {
-        int count = 1;
-        String maMoi;
-        while (true) {
-            // Tao ma theo dang SP001, SP002...
-            maMoi = "SP" + String.format("%03d", count);
-            // Kiem tra xem ma nay da ton tai chua
-            if (timSanPham(maMoi) == null) {
-                // Neu chua co thi dung ma nay
-                break;
-            }
-            // Neu co roi thi tang so len
-            count++;
-        }
-        return maMoi;
+    public String taoMaSP() { 
+        int c=1; 
+        while(true) { 
+            String m="SP"+String.format("%03d",c); 
+            if(timSanPham(m)==null) return m; 
+            c++; 
+        } 
     }
-    
-    public String taoMaKhachHangMoi() {
-        int count = 1;
-        String maMoi;
-        while (true) {
-            // Tao ma theo dang KH001, KH002...
-            maMoi = "KH" + String.format("%03d", count);
-            // Kiem tra ton tai
-            if (timKhachHang(maMoi) == null) {
-                break;
-            }
-            count++;
-        }
-        return maMoi;
+    public String taoMaKH() { 
+        int c=1; 
+        while(true) { 
+            String m="KH"+String.format("%03d",c); 
+            if(timKhachHang(m)==null) return m; 
+            c++; 
+        } 
     }
 }

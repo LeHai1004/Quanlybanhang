@@ -9,7 +9,10 @@ public class ChiTietDonHang {
         this.soLuong = soLuong;
     }
 
-    public double tinhTongPhan() { return sanPham.getGiaBan() * soLuong; }
+    public double tinhTongPhan() {
+        return sanPham.getGiaBan() * soLuong;
+    }
+
     public SanPham getSanPham() { return sanPham; }
     public int getSoLuong() { return soLuong; }
 }

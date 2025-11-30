@@ -9,6 +9,7 @@ public interface IQuanLySanPham {
     List<SanPham> timKiemTheoTen(String ten);
     List<SanPham> layTatCa();
     SanPham timKiemTheoMa(String maSP);
+    
     boolean kiemTraTonKho(String maSP, int soLuongMua);
     void capNhatTonKho(String maSP, int soLuongDaBan);
     void setData(List<SanPham> dsSanPham);
